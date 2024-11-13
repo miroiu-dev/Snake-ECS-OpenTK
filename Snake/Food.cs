@@ -1,57 +1,24 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using GameEngine;
+using GameEngine.Components;
+using OpenTK.Graphics.OpenGL;
+using System.Drawing;
 
 namespace Snake;
-public class Food()
+public class Food : Entity, IRenderable
 {
-    private readonly Random _random = new();
-    private Point _position = new(0, 0);
+    public PositionComponent Position { get; private set; } = default!;
 
-    public void Draw(GameState gameState)
+    protected override void Initialize()
     {
-        if (gameState.CanDrawFood)
-        {
-            _position = GetFood();
-            gameState.CanDrawFood = false;
-        }
-
-        GL.Rect(_position.X, _position.Y, _position.X + 1, _position.Y + 1);
+        base.Initialize();
+        AddComponent<RendererComponent>();
+        Position = AddComponent<PositionComponent>();
+        var collider = AddComponent<ColliderComponent>();
+        collider.Bounds = new Rectangle(0, 0, 1, 1);
     }
 
-    private Point GetFood()
+    public void Render()
     {
-        var newPosition = GenerateFood();
-        
-        while (newPosition == _position)
-        {
-            newPosition = GenerateFood();
-        }
-
-       return newPosition;
-    }
-
-    private Point GenerateFood()
-    {
-        int max = Grid.SIZE - 2;
-        int min = 1;
-
-        int x = _random.Next(min, max);
-        int y = _random.Next(min, max);
-
-        return new Point(x, y);
-    }
-
-    public void SetPosition(int x, int y)
-    {
-        if (x < 0 || x > Grid.SIZE || y < 0 || y > Grid.SIZE)
-        {
-            throw new ArgumentException("Position is out of bounds");
-        }
-
-        _position = new Point(x, y);
-    }
-
-    public Point GetPosition()
-    {
-        return _position;
+        GL.Rect(Position.X, Position.Y, Position.X + 1, Position.Y + 1);
     }
 }

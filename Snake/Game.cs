@@ -1,22 +1,29 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using GameEngine;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using OpenTK.Platform.Windows;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using Snake.Systems;
 
 namespace Snake;
 
 public class Game : GameWindow
 {
-    private readonly Food _food;
-    private readonly GameState _gameState;
-    private readonly Grid _grid = new();
-    private readonly Snake _snake = new();
+    private readonly GameplaySystem _gameplaySystem;
+    private readonly Scene _scene;
+    private readonly Snake _snake;
 
     public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
     {
-        _food = new();
-        _gameState = new(_food);
+        _scene = Scene.CreateDefault();
+
+        _scene.CreateEntity<Grid>();
+        _scene.CreateEntity<Walls>();
+        _snake = _scene.CreateEntity<Snake>();
+
+        _gameplaySystem = _scene.AddSystem<GameplaySystem>();
     }
 
     protected override void OnResize(ResizeEventArgs e)
@@ -34,6 +41,7 @@ public class Game : GameWindow
     {
         base.OnUpdateFrame(args);
     }
+
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         base.OnRenderFrame(args);
@@ -41,16 +49,11 @@ public class Game : GameWindow
         GL.ClearColor(Color4.Black);
         GL.Clear(ClearBufferMask.ColorBufferBit);
 
-        _grid.Draw();
-        _snake.DrawSnake(_gameState);
-        _food.Draw(_gameState);
-
-        int speed = GameState.GetSpeed(_snake.SnakeSize);
-        UpdateFrequency = speed;
+        _scene.Update(args.Time);
 
         SwapBuffers();
 
-        if (_gameState.GameOver)
+        if (_gameplaySystem.GameOver)
         {
             Close();
         }
@@ -60,36 +63,13 @@ public class Game : GameWindow
     {
         base.OnKeyDown(e);
 
-        switch (e.Key)
+        _snake.Direction = e.Key switch
         {
-            case Keys.Left:
-            case Keys.A:
-                if (_gameState.Direction != Direction.Right)
-                {
-                    _gameState.Direction = Direction.Left;
-                }
-                break;
-            case Keys.Right:
-            case Keys.D:
-                if (_gameState.Direction != Direction.Left)
-                {
-                    _gameState.Direction = Direction.Right;
-                }
-                break;
-            case Keys.Up:
-            case Keys.W:
-                if (_gameState.Direction != Direction.Down)
-                {
-                    _gameState.Direction = Direction.Up;
-                }
-                break;
-            case Keys.Down:
-            case Keys.S:
-                if (_gameState.Direction != Direction.Up)
-                {
-                    _gameState.Direction = Direction.Down;
-                }
-                break;
-        }
+            Keys.Left or Keys.A when _snake.Direction != Direction.Right => Direction.Left,
+            Keys.Right or Keys.D when _snake.Direction != Direction.Left => Direction.Right,
+            Keys.Up or Keys.W when _snake.Direction != Direction.Down => Direction.Up,
+            Keys.Down or Keys.S when _snake.Direction != Direction.Up => Direction.Down,
+            _ => _snake.Direction
+        };
     }
 }

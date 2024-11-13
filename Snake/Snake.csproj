@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GameEngine\GameEngine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Assets\icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

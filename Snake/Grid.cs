@@ -1,33 +1,34 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using GameEngine;
+using GameEngine.Components;
+using OpenTK.Graphics.OpenGL;
+using System.Drawing;
 
 namespace Snake;
-public class Grid
+public class Grid : Entity, IRenderable
 {
     public const int SIZE = 40;
-    public void Draw()
+    public void Render()
     {
-        for (int x = 0; x < SIZE; x++)
+        for (int x = 1; x < SIZE - 1; x++)
         {
-            for (int y = 0; y < SIZE; y++)
+            for (int y = 1; y < SIZE - 1; y++)
             {
                 DrawCell(new Point(x, y));
             }
         }
     }
 
-    public void DrawCell(Point point)
+    protected override void Initialize()
     {
-        var isBoundingCell = point.X == 0 || point.Y == 0 || point.X == SIZE - 1 || point.Y == SIZE - 1;
-        if (isBoundingCell)
-        {
-            GL.LineWidth(3.0f);
-            GL.Color3(1.0f, 0f, 0f);
-        }
-        else
-        {
-            GL.LineWidth(1.0f);
-            GL.Color3(1.0f, 1.0f, 1.0f);
-        }
+        base.Initialize();
+        AddComponent<RendererComponent>();
+    }
+
+    public static void DrawCell(Point point)
+    {
+
+        GL.LineWidth(1.0f);
+        GL.Color3(1.0f, 1.0f, 1.0f);
 
         GL.Begin(PrimitiveType.LineLoop);
         GL.Vertex2(point.X, point.Y);
@@ -36,5 +37,4 @@ public class Grid
         GL.Vertex2(point.X, point.Y + 1);
         GL.End();
     }
-
 }

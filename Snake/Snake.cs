@@ -1,125 +1,94 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using GameEngine;
+using GameEngine.Components;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace Snake;
-public class Snake
+public partial class Snake : Entity
 {
-    private readonly int[] _positionX;
-    private readonly int[] _positionY;
-
-    public const int MAX_SNAKE_SIZE = 60;
-    public int SnakeSize { get; private set; } = 5;
-
-    public Snake()
+    private double Speed => _snakeParts.Count switch
     {
-        _positionX = new int[MAX_SNAKE_SIZE];
-        _positionY = new int[MAX_SNAKE_SIZE];
+        int score when score > 10 => 0.08,
+        int score when score > 15 => 0.06,
+        int score when score > 20 => 0.04,
+        int score when score > 25 => 0.02,
+        _ => 0.1
+    };
+    private SnakeHead Head => (SnakeHead)_snakeParts[0];
+    public Direction Direction { get; set; } = Direction.Left;
 
+    private readonly List<SnakePart> _snakeParts = [];
+    public const int DEFAULT_SIZE = 5;
+
+    public event Action? FoodEaten;
+    public event Action? Died;
+
+    private TimerComponent _timer = default!;
+
+    protected override void Initialize()
+    {
         InitializeSnake();
-    }
+        _timer = AddComponent<TimerComponent>();
+        _timer.Interval = Speed;
+        _timer.Tick += MoveSnake;
 
-    public void DrawSnake(GameState gameState)
-    {
-        ShiftBody();
-        MoveSnake(gameState.Direction);
-        DrawSnakeBody();
-        HandleFoodConsumption(gameState);
-        HandleCollision(gameState);
+        Head.Collider.CollisionEnter += OnHeadCollided;
     }
-    private Point GetHeadPosition()
+    private void OnHeadCollided(ColliderComponent component)
     {
-        return new Point(_positionX[0], _positionY[0]);
-    }
-
-    public void DrawSnakeBody()
-    {
-        for (int i = 0; i < SnakeSize; i++)
+        if (component.Entity is Food)
         {
-            if (i == 0)
-            {
-                GL.Color3(1.0f, 0f, 0f);
-            }
-            else
-            {
-                GL.Color3(0f, 1.0f, 0f);
-            }
+            _timer.Interval = Speed;
+            FoodEaten?.Invoke();
+            Grow();
+        }
 
-            GL.Rect(_positionX[i], _positionY[i], _positionX[i] + 1, _positionY[i] + 1);
+        if (component.Entity is SnakePart or Walls)
+        {
+            Died?.Invoke();
         }
     }
 
-    public void MoveSnake(Direction direction)
+    private void Grow()
     {
-        if (direction == Direction.Right)
-        {
-            _positionX[0]++;
-        }
-        else if (direction == Direction.Left)
-        {
-            _positionX[0]--;
-        }
-        else if (direction == Direction.Up)
-        {
-            _positionY[0]++;
+        var newPart = Scene.CreateEntity<SnakePart>();
+        var lastPart = _snakeParts.Last();
+        newPart.MoveTo(lastPart.Position);
+        _snakeParts.Add(newPart);
+    }
 
-        }
-        else if (direction == Direction.Down)
+    private void MoveSnake()
+    {
+        FollowHead();
+        Head.Move(Direction);
+    }
+
+    public void FollowHead()
+    {
+        for (int i = _snakeParts.Count - 1; i > 0; i--)
         {
-            _positionY[0]--;
+            _snakeParts[i].MoveTo(_snakeParts[i - 1].Position);
         }
     }
 
-    public void ShiftBody()
+    public bool IsInsideSnake(Point point)
     {
-        for (int i = SnakeSize - 1; i > 0; i--)
-        {
-            Debug.WriteLine(SnakeSize);
-            _positionX[i] = _positionX[i - 1];
-            _positionY[i] = _positionY[i - 1];
-        }
-    }
-
-    public void HandleFoodConsumption(GameState gameState)
-    {
-        var foodPosition = gameState.GetFoodPosition();
-        var headPosition = GetHeadPosition();
-        bool isFoodConsumed = headPosition.X == foodPosition.X && headPosition.Y == foodPosition.Y;
-
-        if (isFoodConsumed)
-        {
-            SnakeSize = Math.Min(++SnakeSize, MAX_SNAKE_SIZE);
-            gameState.IncreaseScore();
-            gameState.CanDrawFood = true;
-        }
-    }
-
-    public void HandleCollision(GameState gameState)
-    {
-        var headPosition = GetHeadPosition();
-        bool isHeadOutOfBounds = headPosition.X == 0 || headPosition.X == Grid.SIZE - 1 || headPosition.Y == 0 || headPosition.Y == Grid.SIZE - 1;
-
-        if (isHeadOutOfBounds)
-        {
-            gameState.GameOver = true;
-        }
-
-        for (int i = 1; i < SnakeSize; i++)
-        {
-            bool isHeadColidingWithTail = _positionX[i] == headPosition.X && _positionY[i] == headPosition.Y;
-
-            if (isHeadColidingWithTail)
-            {
-                gameState.GameOver = true;
-            }
-        }
+        return _snakeParts.Any(part => part.Position == point);
     }
 
     private void InitializeSnake()
     {
-        for (int i = 0; i < SnakeSize; i++)
+        var head = Scene.CreateEntity<SnakeHead>();
+        head.Position.X = 20;
+        head.Position.Y = 20;
+        _snakeParts.Add(head);
+
+        for (int i = 1; i < DEFAULT_SIZE; i++)
         {
-            _positionX[i] = 20;
-            _positionY[i] = 20;
+            var snakePart = Scene.CreateEntity<SnakePart>();
+            snakePart.Position.X = i + 20;
+            snakePart.Position.Y = 20;
+            _snakeParts.Add(snakePart);
         }
     }
 }

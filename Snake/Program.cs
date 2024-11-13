@@ -3,8 +3,6 @@ using OpenTK.Windowing.Desktop;
 using Snake;
 
 var gameWindowSettings = GameWindowSettings.Default;
-gameWindowSettings.UpdateFrequency = 10;
-
 var nativeWindowSettings = NativeWindowSettings.Default;
 nativeWindowSettings.Profile = ContextProfile.Compatability;
 nativeWindowSettings.Title = "Snake";
