@@ -3,6 +3,7 @@
 namespace GameEngine;
 public class Scene
 {
+    public AssetsDatabase Assets { get; } = new();
     private readonly Dictionary<Type, List<Component>> _componentsByType = [];
     private readonly Dictionary<Entity, List<Component>> _componentsByEntity = [];
     private readonly List<GameSystem> _systems = [];
@@ -11,6 +12,7 @@ public class Scene
     public static Scene CreateDefault()
     {
         var scene = new Scene();
+        scene.Assets.Load();
         scene.AddSystem<RenderSystem>();
         scene.AddSystem<TimeSystem>();
         scene.AddSystem<CollisionSystem>();

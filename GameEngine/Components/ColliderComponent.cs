@@ -5,8 +5,7 @@ public class ColliderComponent : Component
 {
     private readonly HashSet<ColliderComponent> _currentCollisions = [];
     public Rectangle Bounds { get; set; }
-    public string Tag { get; set; } = string.Empty;
-
+    
     public event Action<ColliderComponent>? CollisionEnter;
     public event Action<ColliderComponent>? CollisionExit;
         
@@ -36,7 +35,7 @@ public class ColliderComponent : Component
 
     private Rectangle GetBounds(ColliderComponent collider)
     {
-        var position = collider.Entity.GetComponent<PositionComponent>();
+        var position = collider.Entity.GetComponent<TransformComponent>();
 
         if (position is not null)
         {

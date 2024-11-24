@@ -32,7 +32,7 @@ public class GameplaySystem : GameSystem
 
     private Food GenerateFood()
     {
-        int max = Grid.SIZE - 2;
+        int max = Walls.GRID_SIZE - 2;
         int min = 1;
 
         int x = _random.Next(min, max);

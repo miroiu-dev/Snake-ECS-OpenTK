@@ -1,6 +1,5 @@
 ﻿using GameEngine;
 using GameEngine.Components;
-using System.Diagnostics;
 using System.Drawing;
 
 namespace Snake;

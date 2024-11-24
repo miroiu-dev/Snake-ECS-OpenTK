@@ -1,52 +1,62 @@
 ﻿using GameEngine;
 using GameEngine.Components;
-using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 
 namespace Snake;
-public class Walls : Entity, IRenderable
+public class Walls : Entity
 {
-    private ColliderComponent _leftCollider = default!;
-    private ColliderComponent _rightCollider = default!;
-    private ColliderComponent _bottomCollider = default!;
-    private ColliderComponent _topCollider = default!;
-
-    public void Render()
-    {
-        GL.LineWidth(3.0f);
-        GL.Color3(1.0f, 0f, 0f);
-
-        RenderLine(_leftCollider.Bounds);
-        RenderLine(_rightCollider.Bounds);
-        RenderLine(_bottomCollider.Bounds);
-        RenderLine(_topCollider.Bounds);
-    }
-
-    private static void RenderLine(Rectangle bounds)
-    {
-        GL.Begin(PrimitiveType.LineLoop);
-        GL.Vertex2(bounds.Left, bounds.Top);
-        GL.Vertex2(bounds.Right, bounds.Top);
-        GL.Vertex2(bounds.Right, bounds.Bottom);
-        GL.Vertex2(bounds.Left, bounds.Bottom);
-        GL.End();
-    }
-
+    public const int GRID_SIZE = 40;
     protected override void Initialize()
     {
         base.Initialize();
         AddComponent<RendererComponent>();
-        _leftCollider = AddComponent<ColliderComponent>();
-        _rightCollider = AddComponent<ColliderComponent>();
-        _bottomCollider = AddComponent<ColliderComponent>();
-        _topCollider = AddComponent<ColliderComponent>();
-        _leftCollider.Tag = "Left";
-        _rightCollider.Tag = "Right";
-        _topCollider.Tag = "Top";
-        _bottomCollider.Tag = "Bottom";
-        _leftCollider.Bounds = new Rectangle(0, 0, 1, Grid.SIZE);
-        _rightCollider.Bounds = new Rectangle(Grid.SIZE - 1, 0, 1, Grid.SIZE);
-        _bottomCollider.Bounds = new Rectangle(0, 0, Grid.SIZE, 1);
-        _topCollider.Bounds = new Rectangle(0, Grid.SIZE - 1, Grid.SIZE, 1);
+        var leftCollider = AddComponent<ColliderComponent>();
+        var rightCollider = AddComponent<ColliderComponent>();
+        var bottomCollider = AddComponent<ColliderComponent>();
+        var topCollider = AddComponent<ColliderComponent>();
+     
+        leftCollider.Bounds = new Rectangle(0, 0, 1, GRID_SIZE);
+        rightCollider.Bounds = new Rectangle(0, 0, 1, GRID_SIZE);
+        bottomCollider.Bounds = new Rectangle(0, 0, GRID_SIZE, 1);
+        topCollider.Bounds = new Rectangle(0, 0, GRID_SIZE, 1);
+
+        var leftRenderer = AddComponent<RendererComponent>();
+        var rightRenderer = AddComponent<RendererComponent>();
+        var bottomRenderer = AddComponent<RendererComponent>();
+        var topRenderer = AddComponent<RendererComponent>();
+
+        var leftTransform = AddComponent<TransformComponent>();
+        var rightTransform = AddComponent<TransformComponent>();
+        var bottomTransform = AddComponent<TransformComponent>();
+        var topTransform = AddComponent<TransformComponent>();
+
+        leftTransform.Width = 1;
+        leftTransform.Height = GRID_SIZE;
+        leftTransform.X = 0;
+        leftTransform.Y = 0;
+
+        rightTransform.Width = 1;
+        rightTransform.Height = GRID_SIZE;
+        rightTransform.X = GRID_SIZE - 1;
+        rightTransform.Y = 0;
+
+        bottomTransform.Width = GRID_SIZE;
+        bottomTransform.Height = 1;
+        bottomTransform.X = 0;
+        bottomTransform.Y = 0;
+
+        topTransform.Width = GRID_SIZE;
+        topTransform.Height = 1;
+        topTransform.X = 0;
+        topTransform.Y = GRID_SIZE - 1;
+
+        leftRenderer.SpriteIndex = 0;
+        leftRenderer.TextureName = "snake";
+        rightRenderer.SpriteIndex = 0;
+        rightRenderer.TextureName = "snake";
+        bottomRenderer.SpriteIndex = 0;
+        bottomRenderer.TextureName = "snake";
+        topRenderer.SpriteIndex = 0;
+        topRenderer.TextureName = "snake";
     }
 }
