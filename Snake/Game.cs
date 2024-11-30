@@ -18,6 +18,7 @@ public class Game : GameWindow
     {
         _scene = Scene.CreateDefault();
         _scene.CreateEntity<Walls>();
+        _scene.CreateEntity<Background>();  
         _snake = _scene.CreateEntity<Snake>();
 
         _gameplaySystem = _scene.AddSystem<GameplaySystem>();

@@ -18,7 +18,7 @@ public class Walls : Entity
     {
         for (int i = 0; i < GRID_SIZE; i++)
         {
-            CreateWall(i, 0, Wall.TOP_WALL_SPRITE);
+            CreateWall(i, 0, Tile.TOP_WALL_SPRITE);
         }
     }
 
@@ -26,7 +26,7 @@ public class Walls : Entity
     {
         for (int i = 0; i < GRID_SIZE; i++)
         {
-            CreateWall(0, i, Wall.LEFT_WALL_SPRITE);
+            CreateWall(0, i, Tile.LEFT_WALL_SPRITE);
         }
     }
 
@@ -34,7 +34,7 @@ public class Walls : Entity
     {
         for (int i = 0; i < GRID_SIZE; i++)
         {
-            CreateWall(GRID_SIZE - 1, i, Wall.RIGHT_WALL_SPRITE);
+            CreateWall(GRID_SIZE - 1, i, Tile.RIGHT_WALL_SPRITE);
         }
     }
 
@@ -42,13 +42,13 @@ public class Walls : Entity
     {
         for (int i = 0; i < GRID_SIZE; i++)
         {
-            CreateWall(i, GRID_SIZE - 1, Wall.BOTTOM_WALL_SPRITE);
+            CreateWall(i, GRID_SIZE - 1, Tile.BOTTOM_WALL_SPRITE);
         }
     }
 
     public void CreateWall(int x, int y, int spriteIndex)
     {
-        var wall = Scene.CreateEntity<Wall>();
+        var wall = Scene.CreateEntity<Tile>();
         wall.SpriteIndex = spriteIndex;
         wall.Position.X = x;
         wall.Position.Y = y;

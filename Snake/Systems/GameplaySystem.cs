@@ -7,7 +7,6 @@ public class GameplaySystem : GameSystem
     private Snake _snake = default!;
     private readonly Random _random = new();
     private Food _food = default!;
-
     protected override void Initialize()
     {
         base.Initialize();
@@ -46,6 +45,7 @@ public class GameplaySystem : GameSystem
         var food = Scene.CreateEntity<Food>();
         food.Position.X = x;
         food.Position.Y = y;
+        food.ChangeSpriteRandom();
 
         return food;
     }

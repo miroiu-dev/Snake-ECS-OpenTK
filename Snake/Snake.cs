@@ -7,11 +7,16 @@ public partial class Snake : Entity
 {
     private double Speed => _snakeParts.Count switch
     {
-        int score when score > 10 => 0.08,
-        int score when score > 15 => 0.06,
-        int score when score > 20 => 0.04,
-        int score when score > 25 => 0.02,
-        _ => 0.1
+        int score when score > 36 => 0.02,
+        int score when score > 32 => 0.03,
+        int score when score > 28 => 0.04,
+        int score when score > 24 => 0.05,
+        int score when score > 20 => 0.06,
+        int score when score > 16 => 0.07,
+        int score when score > 12 => 0.08,
+        int score when score > 8 => 0.09,
+        int score when score > 5 => 0.1,
+        _ => 0.12
     };
     private SnakeHead Head => (SnakeHead)_snakeParts[0];
     public Direction Direction { get; set; } = Direction.Left;
@@ -39,10 +44,10 @@ public partial class Snake : Entity
         {
             _timer.Interval = Speed;
             FoodEaten?.Invoke();
-            Grow(); 
+            Grow();
         }
 
-        if (component.Entity is SnakePart or Wall)
+        if (component.Entity is SnakePart or Tile)
         {
             Died?.Invoke();
         }

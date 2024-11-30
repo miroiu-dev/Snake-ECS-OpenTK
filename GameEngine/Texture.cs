@@ -37,15 +37,19 @@ public class Texture(int glHandle, int width, int height)
         return new Texture(handle, image.Width, image.Height);
     }
 
-    public void Draw(Point spritePosition, Size spriteSize, Point position, Size size)
+    public void Draw(Point spritePosition, Size spriteSize, Point position, Size size, float opacity)
     {
+        opacity = Math.Clamp(opacity, 0.0f, 1.0f);
 
         float texLeft = (float)spritePosition.X / Width;
         float texRight = (float)(spritePosition.X + spriteSize.Width) / Width;
         float texBottom = (float)spritePosition.Y / Height;
         float texTop = (float)(spritePosition.Y + spriteSize.Height) / Height;
 
+        GL.Enable(EnableCap.Blend);
+        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         GL.BindTexture(TextureTarget.Texture2D, Handle);
+        GL.Color4(1.0f, 1.0f, 1.0f, opacity);
 
         GL.Begin(PrimitiveType.Quads);
 
@@ -59,5 +63,6 @@ public class Texture(int glHandle, int width, int height)
         GL.Vertex2(position.X, position.Y + size.Height);
 
         GL.End();
+        GL.Disable(EnableCap.Blend);
     }
 }
