@@ -13,14 +13,4 @@ public class RenderSystem : GameSystem
             component.Update(time);
         }
     }
-
-    protected internal override void Initialize()
-    {
-        base.Initialize();
-
-        foreach (var component in Scene.GetComponents<RendererComponent>())
-        {
-            component.Initialize();
-        }
-    }
 }

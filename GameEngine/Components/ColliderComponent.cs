@@ -33,7 +33,7 @@ public class ColliderComponent : Component
         return thisBounds.IntersectsWith(otherBounds);
     }
 
-    private Rectangle GetBounds(ColliderComponent collider)
+    private static Rectangle GetBounds(ColliderComponent collider)
     {
         var position = collider.Entity.GetComponent<TransformComponent>();
 

@@ -6,4 +6,8 @@ public abstract class Component
     protected internal virtual void Update(double time)
     {
     }
+
+    protected internal virtual void Initialize()
+    {
+    }
 }

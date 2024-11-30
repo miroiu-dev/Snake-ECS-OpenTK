@@ -12,6 +12,7 @@ public class Texture(int glHandle, int width, int height)
 
     public static Texture LoadFromFile(string path)
     {
+        StbImage.stbi_set_flip_vertically_on_load(1);
         using var stream = File.OpenRead(path);
         var image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
 
@@ -30,6 +31,9 @@ public class Texture(int glHandle, int width, int height)
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+
         return new Texture(handle, image.Width, image.Height);
     }
 
@@ -41,7 +45,6 @@ public class Texture(int glHandle, int width, int height)
         float texBottom = (float)spritePosition.Y / Height;
         float texTop = (float)(spritePosition.Y + spriteSize.Height) / Height;
 
-        GL.ActiveTexture(TextureUnit.Texture0);
         GL.BindTexture(TextureTarget.Texture2D, Handle);
 
         GL.Begin(PrimitiveType.Quads);

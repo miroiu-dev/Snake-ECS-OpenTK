@@ -86,6 +86,8 @@ public class Scene
             Entity = entity
         };
 
+        component.Initialize();
+
         if (_componentsByType.TryGetValue(typeof(T), out var existingComponents))
         {
             existingComponents.Add(component);

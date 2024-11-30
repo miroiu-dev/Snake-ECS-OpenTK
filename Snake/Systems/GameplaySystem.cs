@@ -1,5 +1,4 @@
 ﻿using GameEngine;
-using GameEngine.Components;
 
 namespace Snake.Systems;
 public class GameplaySystem : GameSystem

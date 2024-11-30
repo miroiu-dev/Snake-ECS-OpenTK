@@ -39,10 +39,10 @@ public partial class Snake : Entity
         {
             _timer.Interval = Speed;
             FoodEaten?.Invoke();
-            Grow();
+            Grow(); 
         }
 
-        if (component.Entity is SnakePart or Walls)
+        if (component.Entity is SnakePart or Wall)
         {
             Died?.Invoke();
         }

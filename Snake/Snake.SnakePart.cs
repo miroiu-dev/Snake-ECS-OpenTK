@@ -11,20 +11,27 @@ public partial class Snake
         public Color Color { get; set; } = Color.FromArgb(0, 255, 0);
         public TransformComponent Position { get; private set; } = default!;
         public ColliderComponent Collider { get; private set; } = default!;
+        protected int SpriteIndex = 53;
+        private RendererComponent _renderer = default!;
 
         protected override void Initialize()
         {
             base.Initialize();
-            //AddComponent<RendererComponent>();
+            var texture = Scene.Assets.GetTexture("snake");
+            _renderer = AddComponent<RendererComponent>();
+            _renderer.SpriteIndex = SpriteIndex;
+            _renderer.Texture = texture;
             Position = AddComponent<TransformComponent>();
+            Position.Width = 1;
+            Position.Height = 1;
             Collider = AddComponent<ColliderComponent>();
             Collider.Bounds = new Rectangle(0, 0, 1, 1);
         }
 
-        public void Render()
+        protected override void Update(double time)
         {
-            GL.Color3(Color);
-            GL.Rect(Position.X, Position.Y, Position.X + 1, Position.Y + 1);
+            base.Update(time);
+            _renderer.SpriteIndex = SpriteIndex;
         }
 
         public void MoveTo(Point point)

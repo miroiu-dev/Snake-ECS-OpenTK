@@ -1,5 +1,4 @@
 ﻿using GameEngine;
-using GameEngine.Systems;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -18,11 +17,10 @@ public class Game : GameWindow
     public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
     {
         _scene = Scene.CreateDefault();
-        _scene.CreateEntity<Food>();
         _scene.CreateEntity<Walls>();
-        //_snake = _scene.CreateEntity<Snake>();
+        _snake = _scene.CreateEntity<Snake>();
 
-        //_gameplaySystem = _scene.AddSystem<GameplaySystem>();
+        _gameplaySystem = _scene.AddSystem<GameplaySystem>();
     }
 
     protected override void OnResize(ResizeEventArgs e)
@@ -51,10 +49,10 @@ public class Game : GameWindow
 
         SwapBuffers();
 
-        //if (_gameplaySystem.GameOver)
-        //{
-        //    Close();
-        //}
+        if (_gameplaySystem.GameOver)
+        {
+            Close();
+        }
     }
 
     protected override void OnKeyDown(KeyboardKeyEventArgs e)
